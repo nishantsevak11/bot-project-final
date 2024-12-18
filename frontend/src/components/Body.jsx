@@ -178,20 +178,25 @@ const Body = () => {
         setLoading(true);
 
         try {
+            console.log('Sending request to:', `${import.meta.env.VITE_API_URL}/api/chat`);
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
+                credentials: 'omit',
+                mode: 'cors',
                 body: JSON.stringify({ message: query }),
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                console.error('Response not ok:', response.status, response.statusText);
+                throw new Error(`Network response was not ok: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log('Received response:', data); // Add this for debugging
+            console.log('Received response:', data);
 
             const botMessage = {
                 text: generate_response(query, data.products),
@@ -201,11 +206,12 @@ const Body = () => {
             };
             setMessages(prev => [...prev, botMessage]);
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error in API call:', error);
             const errorMessage = {
-                text: "Sorry, I'm having trouble connecting right now. Please try again.",
+                text: "Sorry, I'm having trouble connecting right now. Please check your connection and try again.",
                 sender: 'bot',
-                timestamp: new Date().toLocaleTimeString()
+                timestamp: new Date().toLocaleTimeString(),
+                products: []
             };
             setMessages(prev => [...prev, errorMessage]);
         } finally {
