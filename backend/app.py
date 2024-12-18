@@ -23,10 +23,21 @@ except LookupError:
 
 def create_app():
     app = Flask(__name__, static_folder='static')
+    
+    # Configure CORS to allow requests from your Vercel frontend
+    CORS(app, resources={
+        r"/*": {
+            "origins": ["https://bot-project-final.vercel.app", "http://localhost:5173"],
+            "methods": ["GET", "POST", "OPTIONS"],
+            "allow_headers": ["Content-Type"]
+        }
+    })
+    
+    # Configure SQLite database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    CORS(app)
+    
+    # Initialize extensions
     db.init_app(app)
 
     with app.app_context():
