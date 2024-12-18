@@ -24,14 +24,8 @@ except LookupError:
 def create_app():
     app = Flask(__name__, static_folder='static')
     
-    # Configure CORS to allow requests from your Vercel frontend
-    CORS(app, resources={
-        r"/*": {
-            "origins": ["https://bot-project-final.vercel.app", "http://localhost:5173"],
-            "methods": ["GET", "POST", "OPTIONS"],
-            "allow_headers": ["Content-Type"]
-        }
-    })
+    # Enable CORS for all routes
+    CORS(app)
     
     # Configure SQLite database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
@@ -46,6 +40,13 @@ def create_app():
             logger.info("Database tables created successfully")
         except Exception as e:
             logger.error(f"Error creating database tables: {str(e)}")
+
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        return response
 
     # Helper functions for advanced text processing
     def preprocess_text(text):

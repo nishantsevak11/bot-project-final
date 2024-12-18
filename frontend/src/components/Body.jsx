@@ -185,16 +185,15 @@ const Body = () => {
             const response = await fetch(`${API_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Content-Type': 'application/json'
                 },
-                credentials: 'omit',
-                mode: 'cors',
-                body: JSON.stringify({ message: query }),
+                body: JSON.stringify({ message: query })
             });
 
             if (!response.ok) {
                 console.error('Response not ok:', response.status, response.statusText);
+                const errorText = await response.text();
+                console.error('Error response:', errorText);
                 throw new Error(`Network response was not ok: ${response.status}`);
             }
 
