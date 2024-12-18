@@ -120,6 +120,9 @@ const Header = ({ toggleTheme }) => {
         </header>
     );
 };
+const API_URL = import.meta.env.VITE_API_URL || 'https://bot-project-final.onrender.com';
+console.log('API URL:', API_URL); // Debug log
+
 const generate_response = (user_message, products = null) => {
     const greetings = ['hi', 'hello', 'hey', 'greetings'];
     if (greetings.some(greeting => user_message.toLowerCase().includes(greeting))) {
@@ -178,8 +181,8 @@ const Body = () => {
         setLoading(true);
 
         try {
-            console.log('Sending request to:', `${import.meta.env.VITE_API_URL}/api/chat`);
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
+            console.log('Sending request to:', `${API_URL}/api/chat`);
+            const response = await fetch(`${API_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
