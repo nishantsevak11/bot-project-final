@@ -1,4 +1,3 @@
-from app import create_app
 from models.product import Product
 from extensions import db
 import logging
@@ -12,151 +11,131 @@ products = [
     # Electronics
     {
         'name': 'iPhone 15 Pro',
-        'category': 'electronics',
+        'category': 'Electronics',
         'price': 999.99,
         'description': 'Latest iPhone with advanced camera system and A17 Pro chip',
         'quantity_in_stock': 50
     },
     {
         'name': 'iPhone 14',
-        'category': 'electronics',
+        'category': 'Electronics',
         'price': 799.99,
         'description': 'Powerful iPhone with A15 Bionic chip and great camera',
         'quantity_in_stock': 75
     },
-    # Accessories
     {
-        'name': 'Backpack',
-        'category': 'accessories',
-        'price': 49.99,
-        'description': 'Spacious and durable backpack for everyday use',
+        'name': 'Samsung Galaxy S23',
+        'category': 'Electronics',
+        'price': 899.99,
+        'description': 'Premium Android smartphone with advanced features',
+        'quantity_in_stock': 60
+    },
+    {
+        'name': 'MacBook Pro',
+        'category': 'Electronics',
+        'price': 1299.99,
+        'description': 'Powerful laptop for professionals',
+        'quantity_in_stock': 40
+    },
+    {
+        'name': 'AirPods Pro',
+        'category': 'Electronics',
+        'price': 249.99,
+        'description': 'Premium wireless earbuds with noise cancellation',
         'quantity_in_stock': 100
-    },
-    {
-        'name': 'Watch',
-        'category': 'accessories',
-        'price': 199.99,
-        'description': 'Elegant analog watch with leather strap',
-        'quantity_in_stock': 30
-    },
-    {
-        'name': 'Sunglasses',
-        'category': 'accessories',
-        'price': 129.99,
-        'description': 'UV protection sunglasses with polarized lenses',
-        'quantity_in_stock': 45
     },
     # Clothing
     {
         'name': 'T-Shirt',
-        'category': 'clothing',
-        'price': 24.99,
-        'description': 'Cotton crew neck t-shirt',
+        'category': 'Clothing',
+        'price': 19.99,
+        'description': 'Comfortable cotton t-shirt',
         'quantity_in_stock': 200
     },
     {
         'name': 'Jeans',
-        'category': 'clothing',
-        'price': 59.99,
-        'description': 'Classic fit denim jeans',
+        'category': 'Clothing',
+        'price': 49.99,
+        'description': 'Classic blue jeans',
         'quantity_in_stock': 150
     },
     {
         'name': 'Dress',
-        'category': 'clothing',
+        'category': 'Clothing',
         'price': 79.99,
-        'description': 'Elegant casual dress',
+        'description': 'Elegant evening dress',
         'quantity_in_stock': 80
     },
-    # Home Appliances
     {
-        'name': 'Washing Machine',
-        'category': 'appliances',
-        'price': 499.99,
-        'description': 'Front load washing machine with multiple programs',
-        'quantity_in_stock': 20
-    },
-    {
-        'name': 'Refrigerator',
-        'category': 'appliances',
-        'price': 899.99,
-        'description': 'Double door refrigerator with frost-free technology',
-        'quantity_in_stock': 15
+        'name': 'Jacket',
+        'category': 'Clothing',
+        'price': 89.99,
+        'description': 'Stylish winter jacket',
+        'quantity_in_stock': 70
     },
     # Furniture
     {
         'name': 'Sofa',
-        'category': 'furniture',
-        'price': 799.99,
+        'category': 'Furniture',
+        'price': 699.99,
         'description': 'Comfortable 3-seater sofa',
-        'quantity_in_stock': 10
+        'quantity_in_stock': 20
     },
     {
         'name': 'Dining Table',
-        'category': 'furniture',
-        'price': 599.99,
-        'description': '6-seater dining table set',
-        'quantity_in_stock': 8
-    },
-    # Beauty Products
-    {
-        'name': 'Shampoo',
-        'category': 'beauty',
-        'price': 14.99,
-        'description': 'Nourishing shampoo for all hair types',
-        'quantity_in_stock': 300
+        'category': 'Furniture',
+        'price': 399.99,
+        'description': '6-seater dining table',
+        'quantity_in_stock': 15
     },
     {
-        'name': 'Face Cream',
-        'category': 'beauty',
-        'price': 29.99,
-        'description': 'Hydrating face cream with SPF protection',
-        'quantity_in_stock': 250
+        'name': 'Bed',
+        'category': 'Furniture',
+        'price': 899.99,
+        'description': 'Queen size bed with storage',
+        'quantity_in_stock': 25
     },
-    # Sports
+    # Accessories
     {
-        'name': 'Yoga Mat',
-        'category': 'sports',
-        'price': 39.99,
-        'description': 'Non-slip yoga mat with carrying strap',
-        'quantity_in_stock': 120
-    },
-    {
-        'name': 'Dumbbells',
-        'category': 'sports',
+        'name': 'Backpack',
+        'category': 'Accessories',
         'price': 49.99,
-        'description': 'Set of adjustable dumbbells',
-        'quantity_in_stock': 80
+        'description': 'Spacious and durable backpack',
+        'quantity_in_stock': 100
+    },
+    {
+        'name': 'Watch',
+        'category': 'Accessories',
+        'price': 199.99,
+        'description': 'Elegant analog watch',
+        'quantity_in_stock': 50
     }
 ]
 
 def init_db():
     """Initialize the database with product data if it's empty."""
     try:
-        app = create_app()
-        with app.app_context():
-            # Check if database is empty
-            if Product.query.first() is None:
-                logger.info("Initializing database with product data...")
-                for product_data in products:
-                    try:
-                        product = Product(**product_data)
-                        db.session.add(product)
-                        logger.info(f"Added product: {product_data['name']}")
-                    except Exception as e:
-                        logger.error(f"Error adding product {product_data['name']}: {str(e)}")
-                        db.session.rollback()
-                        continue
-                try:
-                    db.session.commit()
-                    logger.info("Database initialized successfully!")
-                except Exception as e:
-                    logger.error(f"Error committing to database: {str(e)}")
-                    db.session.rollback()
-            else:
-                logger.info("Database already contains products. Skipping initialization.")
+        # Create tables
+        db.create_all()
+        
+        # Check if products exist
+        if Product.query.count() == 0:
+            logger.info("Initializing database with products...")
+            
+            # Add products
+            for product_data in products:
+                product = Product(**product_data)
+                db.session.add(product)
+            
+            # Commit changes
+            db.session.commit()
+            logger.info(f"Added {len(products)} products to database")
+        else:
+            logger.info(f"Database already contains {Product.query.count()} products")
+            
     except Exception as e:
-        logger.error(f"Error in init_db: {str(e)}")
+        logger.error(f"Error initializing database: {str(e)}")
+        raise
 
 if __name__ == "__main__":
     init_db()

@@ -48,6 +48,31 @@ def create_app():
         response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
         return response
 
+    # Initialize database with products
+    with app.app_context():
+        try:
+            # Create tables
+            db.create_all()
+            
+            # Check if products exist
+            if Product.query.count() == 0:
+                logger.info("Initializing database with products...")
+                from init_db import products
+                
+                # Add products
+                for product_data in products:
+                    product = Product(**product_data)
+                    db.session.add(product)
+                
+                # Commit changes
+                db.session.commit()
+                logger.info(f"Added {len(products)} products to database")
+            else:
+                logger.info(f"Database already contains {Product.query.count()} products")
+                
+        except Exception as e:
+            logger.error(f"Error initializing database: {str(e)}")
+
     # Helper functions for advanced text processing
     def preprocess_text(text):
         """Clean and normalize text input"""
@@ -218,8 +243,4 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    # Initialize database with products if empty
-    from init_db import init_db
-    with app.app_context():
-        init_db()
     app.run(debug=True, port=5000)
